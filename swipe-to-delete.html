@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+            body,
+            h1,
+            h2,
+            h3,
+            h4,
+            p,
+            figure,
+            blockquote,
+            dl,
+            dd {
+                margin: 0;
+            }
+
+            body {
+                min-height: 100vh;
+                scroll-behavior: smooth;
+                text-rendering: optimizeSpeed;
+                line-height: 1.5;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+                    'Helvetica Neue', sans-serif;
+            }
+
+            .card {
+                position: relative;
+                width: 300px;
+                height: 200px;
+                background: #fff;
+                border-radius: 10px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+                transition: all 0.3s ease;
+                cursor: grab;
+                user-select: none;
+            }
+
+            .card__content {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: linear-gradient(
+                    45deg,
+                    rgba(255, 0, 0, 0.5),
+                    rgba(0, 255, 0, 0.5),
+                    rgba(0, 0, 255, 0.5)
+                );
+                background-size: 400% 400%;
+                animation: gradient 15s ease infinite;
+            }
+
+            .card__title {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #fff;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            .card__description {
+                font-size: 1.2rem;
+                font-weight: 400;
+                color: #fff;
+                text-align: center;
+            }
+
+            .card__delete {
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 100px;
+                height: 100%;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: #ff0000;
+                color: #fff;
+                font-size: 1.2rem;
+                font-weight: 700;
+                cursor: pointer;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            }
+
+            .card__delete:hover {
+                background: #ff3333;
+            }
+
+            .card__delete i {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+
+            .card--delete {
+                transform: translateX(0px);
+            }
+
+            @keyframes gradient {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+
+            .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .container .card {
+                margin: 0 20px;
+            }
+        </style>
+        <title>Document</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="card">
+                <div class="card__content">
+                    <div class="card__title">Card Title</div>
+                    <div class="card__description">Card Description</div>
+                </div>
+                <div class="card__delete">
+                    <i class="fas fa-trash"></i>
+                    delete
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const card = document.querySelector('.card');
+            const cardDelete = document.querySelector('.card__delete');
+
+            // for touch events
+            card.addEventListener('touchstart', handleTouchStart, false);
+            card.addEventListener('touchmove', handleTouchMove, false);
+            card.addEventListener('touchend', handleTouchEnd, false);
+            card.addEventListener('touchcancel', handleTouchCancel, false);
+
+            let xDown = null;
+
+            function getTouches(evt) {
+                console.log(evt.touches);
+                return evt.touches || evt.originalEvent.touches;
+            }
+
+            function handleTouchStart(evt) {
+                console.log('touch start');
+                const firstTouch = getTouches(evt)[0];
+                xDown = firstTouch.clientX;
+
+                console.log(xDown);
+            }
+
+            function handleTouchMove(evt) {
+                if (!xDown) {
+                    return;
+                }
+
+                let xUp = evt.touches[0].clientX;
+                let xDiff = xDown - xUp;
+
+                if (xDiff > 0) {
+                    cardDelete.classList.add('card--delete');
+                } else {
+                    cardDelete.classList.remove('card--delete');
+                }
+
+                xDown = null;
+            }
+
+            function handleTouchEnd(evt) {
+                console.log('touch end');
+                if (!xDown) {
+                    return;
+                }
+
+                console.log(evt.touches);
+
+                if (evt.touches.length === 0) {
+                    cardDelete.classList.remove('card--delete');
+                    return;
+                }
+
+                let xUp = evt.touches[0].clientX;
+                let xDiff = xDown - xUp;
+
+                if (xDiff > 0) {
+                    cardDelete.classList.add('card--delete');
+                } else {
+                    cardDelete.classList.remove('card--delete');
+                }
+
+                xDown = null;
+            }
+
+            function handleTouchCancel(evt) {
+                console.log('touch cancel');
+                xDown = null;
+            }
+
+            // for mouse events
+
+            card.addEventListener('mousedown', handleMouseDown, false);
+            card.addEventListener('mouseup', handleMouseUp, false);
+            card.addEventListener('mousemove', handleMouseMove, false);
+            card.addEventListener('mouseleave', handleMouseLeave, false);
+
+            let xDownMouse = null;
+
+            function handleMouseDown(evt) {
+                console.log(evt);
+                console.log('mouse down');
+                xDownMouse = evt.clientX;
+            }
+
+            function handleMouseUp(evt) {
+                console.log('mouse up');
+                xDownMouse = null;
+            }
+
+            function handleMouseMove(evt) {
+                if (!xDownMouse) {
+                    return;
+                }
+
+                let xUpMouse = evt.clientX;
+                let xDiffMouse = xDownMouse - xUpMouse;
+
+                console.log(xDiffMouse);
+
+                if (xDiffMouse > 0) {
+                    cardDelete.classList.add('card--delete');
+                } else {
+                    cardDelete.classList.remove('card--delete');
+                }
+
+                xDownMouse = null;
+            }
+
+            function handleMouseLeave(evt) {
+                console.log('mouse leave');
+                xDownMouse = null;
+            }
+        </script>
+    </body>
+</html>
