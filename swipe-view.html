@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <style>
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+            body,
+            h1,
+            h2,
+            h3,
+            h4,
+            p,
+            figure,
+            blockquote,
+            dl,
+            dd {
+                margin: 0;
+            }
+
+            body {
+                min-height: 100vh;
+                scroll-behavior: smooth;
+                text-rendering: optimizeSpeed;
+                line-height: 1.5;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                    'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+                    'Helvetica Neue', sans-serif;
+            }
+
+            .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .container__wrapper {
+                position: relative;
+                width: 300px;
+                height: 200px;
+                background: #fff;
+                border-radius: 10px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+                transition: all 0.3s ease;
+                cursor: grab;
+                user-select: none;
+                scroll-behavior: smooth;
+                /* horizontal snap */
+                scroll-snap-type: x mandatory;
+
+                /* vertical snap */
+                /* scroll-snap-type: y mandatory; */
+            }
+
+            .card {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: linear-gradient(
+                    to bottom,
+                    rgba(0, 0, 0, 0.2),
+                    rgba(0, 0, 0, 0.5)
+                );
+            }
+
+            .card__content h1 {
+                color: #fff;
+                font-size: 2rem;
+                font-weight: 700;
+                text-align: center;
+            }
+
+            .card__content p {
+                color: #fff;
+                font-size: 1.2rem;
+                font-weight: 400;
+                text-align: center;
+            }
+
+            .card__content img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+        </style>
+        <title>Document</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="container__wrapper">
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 1</h1>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 2</h1>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 3</h1>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 4</h1>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 5</h1>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 6</h1>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 7</h1>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 8</h1>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 9</h1>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__content">
+                        <h1>Card 10</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const cards = document.querySelectorAll('.card');
+
+            // translatex of each card
+
+            cards.forEach((card, index) => {
+                card.style.transform = `translateX(${index * 100}%)`;
+                // set a random background color
+
+                card.style.backgroundColor = `hsl(${
+                    Math.random() * 360
+                }, 50%, 50%)`;
+            });
+
+            // drag start
+
+            let isDown = false;
+
+            let startX;
+
+            let scrollLeft;
+
+            let currentCard = 0;
+
+            const container = document.querySelector('.container__wrapper');
+
+            container.addEventListener('mousedown', (e) => {
+                isDown = true;
+
+                container.classList.add('active');
+
+                startX = e.pageX - container.offsetLeft;
+
+                scrollLeft = container.scrollLeft;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                isDown = false;
+
+                container.classList.remove('active');
+
+                // snap to the nearest card with animation
+
+                // animate the scroll
+
+                container.scrollTo({
+                    left: currentCard * 300,
+                    behavior: 'smooth',
+
+                    duration: 500,
+                });
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDown = false;
+
+                container.classList.remove('active');
+
+                // snap to the nearest card
+
+                container.scrollLeft = currentCard * 300;
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+
+                e.preventDefault();
+
+                const x = e.pageX - container.offsetLeft;
+
+                const walk = (x - startX) * 3;
+
+                container.scrollLeft = scrollLeft - walk;
+
+                // console.log(walk);
+
+                if (walk > 0) {
+                    currentCard = Math.floor(container.scrollLeft / 300);
+                } else {
+                    currentCard = Math.ceil(container.scrollLeft / 300);
+                }
+
+                console.log(currentCard);
+            });
+
+            container.addEventListener('wheel', (e) => {
+                if (e.deltaY > 0) {
+                    currentCard++;
+                } else {
+                    currentCard--;
+                }
+
+                container.scrollLeft = currentCard * 300;
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    currentCard++;
+                } else if (e.key === 'ArrowLeft') {
+                    currentCard--;
+                }
+
+                container.scrollLeft = currentCard * 300;
+            });
+
+            // touch events
+
+            container.addEventListener('touchstart', (e) => {
+                isDown = true;
+
+                container.classList.add('active');
+
+                startX = e.touches[0].pageX - container.offsetLeft;
+
+                scrollLeft = container.scrollLeft;
+            });
+
+            container.addEventListener('touchend', () => {
+                isDown = false;
+
+                container.classList.remove('active');
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                if (!isDown) return;
+
+                e.preventDefault();
+
+                const x = e.touches[0].pageX - container.offsetLeft;
+
+                const walk = (x - startX) * 3;
+
+                container.scrollLeft = scrollLeft - walk;
+
+                // console.log(walk);
+
+                if (walk > 0) {
+                    currentCard = Math.floor(container.scrollLeft / 300);
+                } else {
+                    currentCard = Math.ceil(container.scrollLeft / 300);
+                }
+
+                console.log(currentCard);
+            });
+
+            // scroll snap
+
+            container.addEventListener('scroll', () => {
+                currentCard = Math.round(container.scrollLeft / 300);
+            });
+        </script>
+    </body>
+</html>
